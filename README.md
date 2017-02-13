@@ -1,4 +1,7 @@
-# Associate users with roles and permissions
+# Associate users with permissions
+##On this fork, we use Roles as a template to have groups of permissions, so it is easier to assign them to users.
+###Permissions are never inherited from roles here.
+###Users can't be related to Roles
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/laravel-permission.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-permission)
 [![Build Status](https://img.shields.io/travis/spatie/laravel-permission/master.svg?style=flat-square)](https://travis-ci.org/spatie/laravel-permission)

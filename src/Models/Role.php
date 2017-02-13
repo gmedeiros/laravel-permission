@@ -87,10 +87,12 @@ class Role extends Model implements RoleContract
      */
     public function hasPermissionTo($permission)
     {
-        if (is_string($permission)) {
-            $permission = app(Permission::class)->findByName($permission);
-        }
-
-        return $this->permissions->contains('id', $permission->id);
+        //Never allow a user to perform an action based on a permission inherited from the Role.
+        return false;
+//        if (is_string($permission)) {
+//            $permission = app(Permission::class)->findByName($permission);
+//        }
+//
+//        return $this->permissions->contains('id', $permission->id);
     }
 }
