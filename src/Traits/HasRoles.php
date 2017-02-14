@@ -281,13 +281,13 @@ trait HasRoles
         if (is_array($permission)) {
             foreach ($permission as $perm) {
                 $partial = $this->hasDirectPermission($perm);
-                if ($partial) {
-                    return true;
+                if (!$partial) {
+                    return false;
                 }
-                return false;
+                return true;
             }
         } elseif (is_string($permission)) {
-            $permission = app(Permission::class)->where('name', $permission)->first();
+            $permission = app(Permission::class)->findByName($permission);
         
             if (!$permission) {
                 return false;
