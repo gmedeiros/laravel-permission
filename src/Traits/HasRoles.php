@@ -193,13 +193,14 @@ trait HasRoles
      */
     public function hasPermissionTo($permission)
     {
-        if (is_string($permission)) {
-            $permission = app(Permission::class)->findByName($permission);
-        }
-
-        return $this->hasDirectPermission($permission) || $this->hasPermissionViaRole($permission);
+        return $this->can($permission);
+//        if (is_string($permission)) {
+//            $permission = app(Permission::class)->findByName($permission);
+//        }
+//
+//        return $this->hasDirectPermission($permission);
     }
-
+    
     /**
      * @deprecated deprecated since version 1.0.1, use hasPermissionTo instead
      *
@@ -211,7 +212,41 @@ trait HasRoles
      */
     public function hasPermission($permission)
     {
-        return $this->hasPermissionTo($permission);
+        return $this->can($permission);
+    }
+    
+    public function can($permission, $requireAll = false)
+    {
+        if (is_array($permission)) {
+            foreach ($permission as $permName) {
+                $hasPerm = $this->can($permName);
+                if ($hasPerm && !$requireAll) {
+                    return true;
+                } elseif (!$hasPerm && $requireAll) {
+                    return false;
+                }
+            }
+            return $requireAll;
+        } else {
+            return $this->validatePermission($permission);
+        }
+    }
+    
+    protected function validatePermission($permission)
+    {
+        //No me fijo en la autorización de los roles, solamente en los permisos
+        foreach ($this->permissions as $perm) {
+            if (substr($perm->routes_allowed, -1) == "*"){ //last char *
+                $routeName = substr($perm->routes_allowed, 0, -1);
+                if (mb_stripos($permission, $routeName) === 0) {
+                    return true;
+                }
+            }
+            if ($perm->routes_allowed == $permission) {
+                return true;
+            };
+        }
+        return false;
     }
 
     /**
@@ -223,7 +258,8 @@ trait HasRoles
      */
     protected function hasPermissionViaRole(Permission $permission)
     {
-        return $this->hasRole($permission->roles);
+        //return $this->hasRole($permission->roles);
+        return false;
     }
 
     /**
@@ -238,7 +274,7 @@ trait HasRoles
         if (is_string($permission)) {
             $permission = app(Permission::class)->findByName($permission);
 
-            if (! $permission) {
+            if (!$permission) {
                 return false;
             }
         }
