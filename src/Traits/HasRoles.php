@@ -287,7 +287,7 @@ trait HasRoles
                 return false;
             }
         } elseif (is_string($permission)) {
-            $permission = app(Permission::class)->findByName($permission);
+            $permission = app(Permission::class)->where('name', $permission)->first();
         
             if (!$permission) {
                 return false;

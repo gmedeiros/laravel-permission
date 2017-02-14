@@ -55,7 +55,7 @@ class Permission extends Model implements PermissionContract
             config('laravel-permission.table_names.user_has_permissions')
         );
     }
-
+    
     /**
      * Find a permission by its name.
      *
@@ -66,11 +66,12 @@ class Permission extends Model implements PermissionContract
     public static function findByName($name)
     {
         $permission = static::where('name', $name)->first();
-
-        if (! $permission) {
+        
+        if (!$permission) {
             throw new PermissionDoesNotExist();
         }
-
+        
         return $permission;
     }
+
 }
