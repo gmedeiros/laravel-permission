@@ -193,7 +193,7 @@ trait HasRoles
      */
     public function hasPermissionTo($permission)
     {
-        return $this->can($permission);
+        return $this->hasDirectPermission($permission);
 //        if (is_string($permission)) {
 //            $permission = app(Permission::class)->findByName($permission);
 //        }
@@ -212,13 +212,20 @@ trait HasRoles
      */
     public function hasPermission($permission)
     {
-        return $this->can($permission);
+        return $this->hasDirectPermission($permission);
     }
     
-    public function can($permission, $requireAll = false)
+    /**
+     * Check if allowed to execute certain route by the name of the route (not the name of the permission)
+     *
+     * @param string $permissionRoute
+     * @param bool $requireAll
+     * @return bool
+     */
+    public function can($permissionRoute, $requireAll = false)
     {
-        if (is_array($permission)) {
-            foreach ($permission as $permName) {
+        if (is_array($permissionRoute)) {
+            foreach ($permissionRoute as $permName) {
                 $hasPerm = $this->can($permName);
                 if ($hasPerm && !$requireAll) {
                     return true;
@@ -228,7 +235,7 @@ trait HasRoles
             }
             return $requireAll;
         } else {
-            return $this->validatePermission($permission);
+            return $this->validatePermission($permissionRoute);
         }
     }
     
@@ -271,14 +278,22 @@ trait HasRoles
      */
     public function hasDirectPermission($permission)
     {
-        if (is_string($permission)) {
+        if (is_array($permission)) {
+            foreach ($permission as $perm) {
+                $partial = $this->hasDirectPermission($perm);
+                if (!$partial) {
+                    return false;
+                }
+                return true;
+            }
+        } elseif (is_string($permission)) {
             $permission = app(Permission::class)->findByName($permission);
-
+        
             if (!$permission) {
                 return false;
             }
         }
-
+    
         return $this->permissions->contains('id', $permission->id);
     }
 
