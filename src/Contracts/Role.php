@@ -16,7 +16,7 @@ interface Role
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function users();
+//    public function users();
 
     /**
      * Find a role by its name.
