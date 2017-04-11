@@ -11,7 +11,7 @@ use Spatie\Permission\Traits\RefreshesPermissionCache;
 class Role extends Model implements RoleContract
 {
     use HasPermissions;
-    use RefreshesPermissionCache;
+//    use RefreshesPermissionCache;
 
     /**
      * The attributes that aren't mass assignable.
